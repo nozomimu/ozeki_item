@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180121061720) do
+ActiveRecord::Schema.define(version: 20180214060755) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -29,6 +29,12 @@ ActiveRecord::Schema.define(version: 20180121061720) do
     t.index ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true
   end
 
+  create_table "brands", force: :cascade do |t|
+    t.string "brand_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "carts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "item_id"
@@ -43,9 +49,8 @@ ActiveRecord::Schema.define(version: 20180121061720) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "discs", force: :cascade do |t|
-    t.integer "item_id"
-    t.string "disc_name"
+  create_table "colors", force: :cascade do |t|
+    t.string "color_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -64,32 +69,36 @@ ActiveRecord::Schema.define(version: 20180121061720) do
   create_table "history_addresses", force: :cascade do |t|
     t.string "postal_code"
     t.string "address"
+    t.string "address_more"
     t.string "lastname"
     t.string "firstname"
     t.string "kana_lastname"
     t.string "kana_firstname"
     t.string "phone"
+    t.string "phone2"
+    t.string "phone3"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "items", force: :cascade do |t|
-    t.string "artist_name"
     t.string "item_name"
     t.text "image_id"
     t.integer "price"
-    t.string "label_name"
+    t.string "item_season"
     t.integer "stock"
     t.integer "category_id"
+    t.integer "color_id"
+    t.integer "size_id"
+    t.integer "brand_id"
+    t.integer "active", default: 0
     t.date "release_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "songs", force: :cascade do |t|
-    t.integer "disc_id"
-    t.string "song_name"
-    t.integer "number"
+  create_table "sizes", force: :cascade do |t|
+    t.string "size_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -97,6 +106,17 @@ ActiveRecord::Schema.define(version: 20180121061720) do
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
+    t.string "lastname"
+    t.string "firstname"
+    t.string "kana_lastname"
+    t.string "kana_firstname"
+    t.string "postal_code"
+    t.string "address"
+    t.string "address_more"
+    t.string "phone"
+    t.string "phone2"
+    t.string "phone3"
+    t.integer "active", default: 0
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

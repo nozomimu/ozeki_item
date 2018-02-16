@@ -6,6 +6,17 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       ## Database authenticatable
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
+      t.string :lastname
+      t.string :firstname
+      t.string :kana_lastname
+      t.string :kana_firstname
+      t.string :postal_code
+      t.string :address
+      t.string :address_more
+      t.string :phone
+      t.string :phone2
+      t.string :phone3
+      t.integer :active, default: 0
 
       ## Recoverable
       t.string   :reset_password_token
@@ -20,6 +31,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       t.datetime :last_sign_in_at
       t.string   :current_sign_in_ip
       t.string   :last_sign_in_ip
+
+      t.datetime :created_at, null: false
+      t.datetime :updated_at, null: false
 
       ## Confirmable
       # t.string   :confirmation_token

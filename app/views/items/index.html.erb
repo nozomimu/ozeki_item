@@ -1,43 +1,95 @@
-<h1>CD一覧<h4><%=link_to("カテゴリー編集","/categories/edit")%></h4></h1>
-<!DOCTYPE html>
-<html>
-<head>
-	<title>画面５（インデックス）</title>
-	<meta charset="utf-8">
-	<link rel="stylesheet" href="style5.css">
-</head>
-<!--検索フォーム-->
-<body>商品検索
-　<%= search_form_for @q,url: items_path do |f| %>
-  <%= f.search_field :artist_name_or_label_name_or_item_name_cont %>
-  <%= f.submit "search",class: 'record-form__submit-button' %><br><br>
+<%if flash%>
+   　<!-- ログイン時のメッセージ格納 -->
+      <% flash.each do |key,msg|%>
+       <div class="flash_<%= key%> flash">
+         <%= msg %><br>
+       </div>
+      <% end %>
+   <% end %>
 
-	<div class="container">
-		<thead>
-			<tr>
-			<% if @items.each do |i| %>
-			<td><div class="item_image">
-				<!--画像画面左　登録がない場合noimageを表示-->
-				<%= attachment_image_tag i, :image, :fill, 150, 150, format: 'jpeg', fallback: "noimage_panda1.jpg",class:"item_image" %></div></td>
-				<!--商品内容-->
-				<td><div>artist name:<%= i.artist_name %></div>
-				<div>cd name:<%= i.item_name %></div>
-				<div>label:<%= i.label_name %></div>
-				<div>stock:<%= i.stock %></div>
-				<div>price:￥<%= i.price %></div>
-				<%=link_to("編集する","/items/#{i.id}/edit")%><br>
-				<%=link_to("削除する",item_path(i), method: :delete)%><br><% end %></td>
-			</div>
+<h1>商品一覧</h1>
+<% if admin_signed_in? %>
+	<%=link_to("カテゴリー編集",categories_path)%>
+<% end %>
+
+	<div class="item_container">
+		<% if params[:q].present? && params[:q][:artist_name_or_label_name_or_item_name_cont].present? %>
+		<div>
+			<p>検索語句：　<%= params[:q][:artist_name_or_label_name_or_item_name_cont] %></p>
 		</div>
+		<% end %>
+		<table class="item_index_box">
+
+			<% @items.each do |item| %>
+			<tr>
+				<td>
+					<!--画像画面左　登録がない場合noimageを表示-->
+					<%= link_to item_path(item.id) do %>
+					<%= attachment_image_tag item, :image, :fill, 150, 150, format: 'jpeg', fallback: "noimage_panda1.jpg",class:"item_image" %>
+					<% end %>
+				</td>
+					<!--商品内容-->
+				<td class="item_index_box_detail">
+					<p><%= item.item_name %></p>
+					<p><h3><%= link_to "#{item.item_name}", item_path(item) %></h3></p>
+					<p></p>
+					<p><%= number_to_currency(item.price, :unit => "¥", :precision => 0) %>
+					<% if item.stock == 0 %>
+                      <span>売り切れ</span>
+                    <% else %>
+                      <span>(在庫: <%= item.stock %>個)</span>
+                    <% end %>
+					</p>
+					<td>
+						<% if admin_signed_in? %>
+							<%=link_to("編集する","/items/#{item.id}/edit")%><br>
+						<% end %>
+					</td>
+				</td>
+			</tr>
+			<% end %>
+
+
+		</table>
 	</div>
-</tr>
-</thead><% end %><% end %><br><br>
+	<% if admin_signed_in? %>
+	<h1>非表示商品一覧</h1>
+	<div class="item_container">
+		<% if params[:q].present? && params[:q][:artist_name_or_label_name_or_item_name_cont].present? %>
+		<div>
+			<p>検索語句：　<%= params[:q][:artist_name_or_label_name_or_item_name_cont] %></p>
+		</div>
+		<% end %>
 
-
-
-
-	<!--           こ          こ            か         ら        先はeachで表示される部分だから、実装する時は消す-->
-		<!--                こ            こ              ま              で               消               す               -->
-
-</body>
-</html>
+		<table class="item_index_box">
+			<% @no_items.each do |item| %>
+			<tr>
+				<td>
+					<!--画像画面左　登録がない場合noimageを表示-->
+					<%= link_to item_path(item.id) do %>
+					<%= attachment_image_tag item, :image, :fill, 150, 150, format: 'jpeg', fallback: "noimage_panda1.jpg",class:"item_image" %>
+					<% end %>
+				</td>
+					<!--商品内容-->
+				<td class="item_index_box_detail">
+					<p><%= item.artist_name %></p>
+					<p><h3><%= link_to "#{item.item_name}", item_path(item) %></h3></p>
+					<p><%= item.label_name %></p>
+					<p><%= number_to_currency(item.price, :unit => "¥", :precision => 0) %>
+					<% if item.stock == 0 %>
+                      <span>売り切れ</span>
+                    <% else %>
+                      <span>(在庫: <%= item.stock %>個)</span>
+                    <% end %>
+					</p>
+					<td>
+						<% if admin_signed_in? %>
+							<%=link_to("編集する","/items/#{item.id}/edit")%><br>
+						<% end %>
+					</td>
+				</td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+	<% end %>

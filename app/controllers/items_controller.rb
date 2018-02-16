@@ -1,17 +1,19 @@
 class ItemsController < ApplicationController
 
   def index
-    @q = Item.search(params[:q])
+    @item = Item.where(active: 0)
+    @q = @item.search(params[:q])
     @items = @q.result(distinct: true)
+
+    #非表示アイテムを表示しない
+    @no_item = Item.where(active: 1)
+    @no_q = @no_item.search(params[:q])
+    @no_items = @no_q.result(distinct: true)
   end
 
 
   def new
   	@item = Item.new
-    @disc = @item.discs.build
-    # @song = @disc.songs.build
-    3.times{@song = @disc.songs.build}
-
   end
 
   def create
@@ -19,11 +21,12 @@ class ItemsController < ApplicationController
     #Rails.logger.info(@item)
     @item.save
     # Rails.logger.info(@item)
-    redirect_to ("/items") 
-   
+    redirect_to ("/items")
   end
 
   def show
+    @item = Item.find(params[:id])
+    @cart = Cart.new
   end
 
   def edit
@@ -39,7 +42,7 @@ class ItemsController < ApplicationController
       #updateを失敗すると編集ページへ
       render ("items/edit")
     end
-    
+
   end
 
   def destroy
@@ -50,6 +53,6 @@ class ItemsController < ApplicationController
 
   private
     def item_params
-        params.require(:item).permit(:artist_name , :item_name, :image, :price, :label_name, :stock, :category_id, :release_date,discs_attributes:[:disc_name,songs_attributes:[:number, :id,:song_name]])
+        params.require(:item).permit(:item_name, :image, :price,:item_season, :stock, :color_id, :category_id, :brand_id, :size_id, :release_date)
     end
 end
